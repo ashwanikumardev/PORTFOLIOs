@@ -34,17 +34,20 @@ export function VideoCard({ video }: VideoCardProps) {
           className="relative block w-full rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <Backlight blur={BACKLIGHT_BLUR} className="w-full">
+            {/* Thumbnail image — loads fast, no iframe overhead */}
             <Image
               src={video.thumbnail}
               alt={video.title}
               width={640}
               height={360}
-              className="aspect-video w-full rounded-lg object-cover"
+              loading="lazy"
+              placeholder="empty"
+              className="aspect-video w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             />
           </Backlight>
-          {/* Play button overlay (outside the filtered layer so it stays crisp) */}
+          {/* Play button overlay */}
           <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="flex size-14 items-center justify-center rounded-full bg-red-600/90 shadow-lg transition-transform duration-300 group-hover:scale-110">
+            <span className="flex size-14 items-center justify-center rounded-full bg-red-600/90 shadow-lg shadow-red-600/25 transition-all duration-300 group-hover:scale-110 group-hover:bg-red-600 group-hover:shadow-xl group-hover:shadow-red-600/30">
               <PlayIcon className="size-6 translate-x-[1px] fill-white text-white" />
             </span>
           </span>

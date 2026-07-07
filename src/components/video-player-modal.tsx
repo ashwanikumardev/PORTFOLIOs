@@ -15,14 +15,50 @@ interface VideoPlayerModalProps {
 }
 
 function getYouTubeEmbedUrl(url: string) {
-  const regExp = /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  const videoId = match && match[1];
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+  try {
+    const parsedUrl = new URL(url);
+    const shortsMatch = parsedUrl.pathname.match(/\/shorts\/([^/?]+)/);
+    const embedMatch = parsedUrl.pathname.match(/\/embed\/([^/?]+)/);
+    const videoId =
+      shortsMatch?.[1] ||
+      embedMatch?.[1] ||
+      parsedUrl.searchParams.get("v") ||
+      (parsedUrl.hostname === "youtu.be" ? parsedUrl.pathname.slice(1) : "");
+
+    if (!videoId) return "";
+
+    // Embed params to hide YouTube branding/links and show only basic controls:
+    // autoplay=1        - auto-play when modal opens
+    // rel=0             - no related videos at the end
+    // modestbranding=1  - hide YouTube logo from controls
+    // showinfo=0        - hide video title/uploader info
+    // iv_load_policy=3  - hide annotations
+    // controls=1        - show only basic player controls (play, seek, volume, fullscreen)
+    // playsinline=1     - inline playback on mobile
+    // disablekb=0       - allow keyboard seek (arrow keys for forward/backward)
+    // fs=1              - allow fullscreen
+    // cc_load_policy=0  - don't auto-show captions
+    const params = new URLSearchParams({
+      autoplay: "1",
+      rel: "0",
+      modestbranding: "1",
+      showinfo: "0",
+      iv_load_policy: "3",
+      controls: "1",
+      playsinline: "1",
+      disablekb: "0",
+      fs: "1",
+      cc_load_policy: "0",
+    });
+
+    return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+  } catch {
+    return "";
+  }
 }
 
 function isYouTubeUrl(url: string) {
-  return url.includes('youtube.com') || url.includes('youtu.be');
+  return url.includes("youtube.com") || url.includes("youtu.be");
 }
 
 export function VideoPlayerModal({ isOpen, onClose, videoUrl, videoTitle }: VideoPlayerModalProps) {
@@ -44,8 +80,10 @@ export function VideoPlayerModal({ isOpen, onClose, videoUrl, videoTitle }: Vide
               title={videoTitle || "Video player"}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer"
               className="w-full h-full rounded-lg"
-              style={{ border: 'none' }}
+              style={{ border: "none" }}
             />
           ) : (
             <video
@@ -53,7 +91,7 @@ export function VideoPlayerModal({ isOpen, onClose, videoUrl, videoTitle }: Vide
               controls
               autoPlay
               className="w-full h-full rounded-lg"
-              style={{ backgroundColor: 'black' }}
+              style={{ backgroundColor: "black" }}
             >
               Your browser does not support the video tag.
             </video>

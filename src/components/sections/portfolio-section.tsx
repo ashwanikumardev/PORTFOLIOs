@@ -1,31 +1,35 @@
 "use client";
 
-import { PORTFOLIO_ITEMS, PORTFOLIO_CATEGORIES } from "@/data/site";
+import {
+  PORTFOLIO_ITEMS,
+  PORTFOLIO_CATEGORIES,
+  type PortfolioItem,
+} from "@/data/site";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import { ExternalLink, Play, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 /**
- * Convert various YouTube URL formats to an embeddable URL.
- * Supports: youtube.com/watch?v=, youtu.be/, youtube.com/shorts/
+ * Supports: youtube.com/watch?v=, youtu.be/, youtube.com/embed/, youtube.com/shorts/
  */
-function getYouTubeEmbedUrl(url: string): string | null {
+function getYouTubeVideoId(url: string): string | null {
   try {
     const u = new URL(url);
 
-    // youtube.com/shorts/VIDEO_ID
     const shortsMatch = u.pathname.match(/\/shorts\/([^/?]+)/);
-    if (shortsMatch) return `https://www.youtube.com/embed/${shortsMatch[1]}?autoplay=1&rel=0`;
+    if (shortsMatch) return shortsMatch[1];
 
-    // youtube.com/watch?v=VIDEO_ID
+    const embedMatch = u.pathname.match(/\/embed\/([^/?]+)/);
+    if (embedMatch) return embedMatch[1];
+
     const watchId = u.searchParams.get("v");
-    if (watchId) return `https://www.youtube.com/embed/${watchId}?autoplay=1&rel=0`;
+    if (watchId) return watchId;
 
-    // youtu.be/VIDEO_ID
     if (u.hostname === "youtu.be") {
       const id = u.pathname.slice(1);
-      if (id) return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+      if (id) return id;
     }
 
     return null;
@@ -34,11 +38,86 @@ function getYouTubeEmbedUrl(url: string): string | null {
   }
 }
 
+function getYouTubeEmbedUrl(url: string): string | null {
+  const videoId = getYouTubeVideoId(url);
+  if (!videoId) return null;
+
+  const params = new URLSearchParams({
+    autoplay: "1",
+    rel: "0",
+    modestbranding: "1",
+    showinfo: "0",
+    iv_load_policy: "3",
+    controls: "1",
+    playsinline: "1",
+    disablekb: "0",
+    fs: "1",
+    cc_load_policy: "0",
+  });
+
+  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+}
+
+function getYouTubeThumbnailUrl(url: string): string | null {
+  const videoId = getYouTubeVideoId(url);
+  return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+}
+
+function isYouTubeShort(url: string): boolean {
+  try {
+    return new URL(url).pathname.includes("/shorts/");
+  } catch {
+    return false;
+  }
+}
+
+function getPortfolioThumbnail(item: PortfolioItem): string | null {
+  if (item.videoUrl) {
+    return getYouTubeThumbnailUrl(item.videoUrl);
+  }
+
+  // The current /portfolio placeholder files are not present in public.
+  return item.thumbnail.startsWith("/portfolio/") ? null : item.thumbnail;
+}
+
+const fallbackThumbnailStyles: Record<string, string> = {
+  "AI Advertising": "from-cyan-500/30 via-blue-500/20 to-fuchsia-500/25",
+  Fashion: "from-rose-500/30 via-pink-500/20 to-sky-500/25",
+  Food: "from-emerald-500/30 via-lime-500/20 to-amber-500/25",
+  "Real Estate": "from-sky-500/30 via-cyan-500/20 to-slate-400/25",
+  Healthcare: "from-teal-500/30 via-sky-500/20 to-indigo-500/25",
+  Automotive: "from-red-500/30 via-orange-500/20 to-zinc-400/25",
+  Technology: "from-indigo-500/30 via-violet-500/20 to-cyan-500/25",
+};
+
+function PortfolioFallbackThumbnail({ item }: { item: PortfolioItem }) {
+  return (
+    <div
+      className={cn(
+        "absolute inset-0 bg-gradient-to-br",
+        fallbackThumbnailStyles[item.category] ??
+          "from-electric/25 via-purple/20 to-cyan-500/25"
+      )}
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.2),transparent_32%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.14),transparent_28%)]" />
+      <div className="absolute inset-x-0 bottom-0 p-4">
+        <span className="rounded-md border border-white/15 bg-black/30 px-2 py-1 text-[10px] font-ui font-medium uppercase tracking-wider text-white/80 backdrop-blur-sm">
+          {item.category}
+        </span>
+        <p className="mt-3 max-w-[13rem] font-display text-sm font-semibold leading-snug text-white">
+          {item.title}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export function PortfolioSection() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [videoModal, setVideoModal] = useState<{
     url: string;
     title: string;
+    isPortrait: boolean;
   } | null>(null);
 
   const filteredItems =
@@ -49,7 +128,11 @@ export function PortfolioSection() {
   const openVideo = (videoUrl: string, title: string) => {
     const embedUrl = getYouTubeEmbedUrl(videoUrl);
     if (embedUrl) {
-      setVideoModal({ url: embedUrl, title });
+      setVideoModal({
+        url: embedUrl,
+        title,
+        isPortrait: isYouTubeShort(videoUrl),
+      });
     }
   };
 
@@ -110,6 +193,7 @@ export function PortfolioSection() {
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filteredItems.map((item, i) => {
               const hasVideo = !!item.videoUrl;
+              const thumbnailSrc = getPortfolioThumbnail(item);
 
               return (
                 <motion.div
@@ -144,8 +228,21 @@ export function PortfolioSection() {
                     hasVideo ? `Play video: ${item.title}` : item.title
                   }
                 >
-                  {/* Thumbnail / Video placeholder */}
+                  {/* Thumbnail / Video preview */}
                   <div className="relative aspect-video bg-gradient-to-br from-electric/10 to-purple/10 flex items-center justify-center overflow-hidden">
+                    {thumbnailSrc ? (
+                      <Image
+                        src={thumbnailSrc}
+                        alt={`${item.title} thumbnail`}
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        priority={i === 0}
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <PortfolioFallbackThumbnail item={item} />
+                    )}
+
                     {hasVideo ? (
                       <>
                         {/* Play button overlay */}
@@ -165,9 +262,11 @@ export function PortfolioSection() {
                         </div>
                       </>
                     ) : (
-                      <div className="flex flex-col items-center gap-2 text-muted-foreground/40">
-                        <ExternalLink className="size-8" />
-                        <span className="text-xs font-ui">Preview</span>
+                      <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1 rounded-md bg-black/40 px-2 py-1 text-white/80 backdrop-blur-sm">
+                        <ExternalLink className="size-3" />
+                        <span className="text-[10px] font-ui font-medium">
+                          Preview
+                        </span>
                       </div>
                     )}
                   </div>
@@ -224,7 +323,12 @@ export function PortfolioSection() {
                 stiffness: 300,
                 damping: 25,
               }}
-              className="relative z-10 w-full max-w-4xl"
+              className={cn(
+                "relative z-10 w-full",
+                videoModal.isPortrait
+                  ? "max-w-[min(24rem,45vh)]"
+                  : "max-w-4xl"
+              )}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
@@ -243,16 +347,21 @@ export function PortfolioSection() {
               </p>
 
               {/* Video container — responsive for both landscape and portrait (Shorts) */}
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/50">
-                <div className="relative w-full" style={{ paddingTop: "min(177.78%, 80vh)" }}>
-                  <iframe
-                    src={videoModal.url}
-                    title={videoModal.title}
-                    className="absolute inset-0 h-full w-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
+              <div
+                className={cn(
+                  "relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/50",
+                  videoModal.isPortrait ? "aspect-[9/16]" : "aspect-video"
+                )}
+              >
+                <iframe
+                  src={videoModal.url}
+                  title={videoModal.title}
+                  className="absolute inset-0 h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
               </div>
             </motion.div>
           </motion.div>
