@@ -13,7 +13,7 @@ export function PricingSection() {
         <div className="text-center">
           <span className="timecode">00:00:07:00</span>
           <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Simple, Transparent Pricing
+            Choose Your Plan
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground font-body">
             Choose a plan that fits your needs. Every plan includes
@@ -21,7 +21,7 @@ export function PricingSection() {
           </p>
           {/* PLACEHOLDER: Pricing is illustrative — update before launch */}
           <p className="mt-2 text-xs text-muted-foreground/50 font-ui">
-            Prices shown are illustrative. Book a call for a custom quote.
+            Contact us for a custom quote tailored to your needs.
           </p>
         </div>
 

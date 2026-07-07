@@ -51,7 +51,7 @@ function getYouTubeEmbedUrl(url: string) {
       cc_load_policy: "0",
     });
 
-    return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+    return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
   } catch {
     return "";
   }
@@ -81,7 +81,6 @@ export function VideoPlayerModal({ isOpen, onClose, videoUrl, videoTitle }: Vide
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               loading="lazy"
-              referrerPolicy="no-referrer"
               className="w-full h-full rounded-lg"
               style={{ border: "none" }}
             />

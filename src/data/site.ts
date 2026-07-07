@@ -343,8 +343,8 @@ export interface PricingTier {
 export const PRICING_TIERS: PricingTier[] = [
   {
     name: "Starter",
-    price: "$499",
-    period: "/project",
+    price: "Basic",
+    period: "",
     description: "Perfect for small businesses and first-time clients testing AI-powered creative.",
     features: [
       { text: "1 AI video ad (up to 30s)", included: true },
@@ -361,8 +361,8 @@ export const PRICING_TIERS: PricingTier[] = [
   },
   {
     name: "Growth",
-    price: "$1,299",
-    period: "/month",
+    price: "Popular",
+    period: "",
     description: "For growing brands that need consistent, high-quality creative every month.",
     features: [
       { text: "4 AI video ads per month", included: true },
@@ -379,8 +379,8 @@ export const PRICING_TIERS: PricingTier[] = [
   },
   {
     name: "Scale",
-    price: "$2,999",
-    period: "/month",
+    price: "Enterprise",
+    period: "",
     description: "Full-service creative partnership for brands ready to scale their advertising.",
     features: [
       { text: "Unlimited AI video ads", included: true },

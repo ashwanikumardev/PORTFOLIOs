@@ -55,7 +55,7 @@ function getYouTubeEmbedUrl(url: string): string | null {
     cc_load_policy: "0",
   });
 
-  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+  return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 }
 
 function getYouTubeThumbnailUrl(url: string): string | null {
@@ -360,7 +360,6 @@ export function PortfolioSection() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   loading="lazy"
-                  referrerPolicy="no-referrer"
                 />
               </div>
             </motion.div>

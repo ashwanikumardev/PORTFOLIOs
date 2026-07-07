@@ -22,12 +22,14 @@ export default function JsonLd() {
       contactType: "customer service",
       availableLanguage: "English",
     },
-    offers: {
-      "@type": "AggregateOffer",
-      priceCurrency: "USD",
-      lowPrice: "499",
-      highPrice: "2999",
-      offerCount: "3",
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Creative Services",
+      itemListElement: [
+        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Starter Plan" } },
+        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Growth Plan" } },
+        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Scale Plan" } },
+      ],
     },
     knowsAbout: [
       "AI Video Advertising",
