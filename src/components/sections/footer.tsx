@@ -87,14 +87,6 @@ export function Footer() {
               >
                 WhatsApp
               </a>
-              <a
-                href={SITE.calendly}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-muted-foreground font-body transition-colors hover:text-foreground w-fit"
-              >
-                Schedule a Call
-              </a>
             </div>
           </div>
         </div>

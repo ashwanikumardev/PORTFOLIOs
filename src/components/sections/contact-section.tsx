@@ -2,8 +2,10 @@
 
 import { SITE } from "@/data/site";
 import { motion } from "framer-motion";
-import { Send, Mail, MessageCircle, Calendar } from "lucide-react";
+import { Send, Mail, MessageCircle } from "lucide-react";
 import { useState, type FormEvent } from "react";
+
+const WEB3FORMS_KEY = "751f073a-295c-4d90-85ed-58eee6a51056";
 
 export function ContactSection() {
   const [formState, setFormState] = useState({
@@ -22,15 +24,24 @@ export function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formState),
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `New Inquiry from ${formState.name.trim()}${formState.company ? ` — ${formState.company.trim()}` : ""}`,
+          from_name: "QuantaAI Studio Website",
+          name: formState.name.trim(),
+          email: formState.email.trim(),
+          company: formState.company.trim() || "Not provided",
+          message: formState.details.trim(),
+        }),
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Something went wrong");
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Something went wrong");
       }
 
       setSubmitted(true);
@@ -231,23 +242,6 @@ export function ContactSection() {
                 <p className="font-semibold font-display text-sm">WhatsApp</p>
                 <p className="text-xs text-muted-foreground">
                   Chat with us directly
-                </p>
-              </div>
-            </a>
-
-            <a
-              href={SITE.calendly}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/20 px-5 py-4 text-sm font-body text-foreground transition-all hover:bg-card/40 hover:border-border"
-            >
-              <Calendar className="size-5 text-purple" />
-              <div>
-                <p className="font-semibold font-display text-sm">
-                  Schedule a Call
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Pick a time that works
                 </p>
               </div>
             </a>
