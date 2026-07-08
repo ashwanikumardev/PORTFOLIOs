@@ -81,7 +81,7 @@ export function HeroSection() {
             href="#contact"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-electric to-purple px-6 py-3 text-sm font-ui font-semibold text-white shadow-lg shadow-electric/20 transition-all duration-200 hover:opacity-90 hover:shadow-xl hover:shadow-electric/30 hover:-translate-y-0.5"
           >
-            Book a Call
+            Get Started
             <ArrowRight className="size-4" />
           </a>
           <a

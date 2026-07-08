@@ -65,24 +65,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // TODO: Connect to email service (Resend, Formspree, SendGrid, etc.)
-    // For now, log the submission and return success
-    console.log("── Contact Form Submission ──");
-    console.log("Name:", name.trim());
-    console.log("Email:", email.trim());
-    console.log("Company:", (company || "").trim() || "N/A");
-    console.log("Details:", details.trim());
-    console.log("Timestamp:", new Date().toISOString());
-    console.log("────────────────────────────");
+    // Send email via Web3Forms (free, no signup needed)
+    const web3formsResponse = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        access_key: process.env.WEB3FORMS_ACCESS_KEY,
+        subject: `New Inquiry from ${name.trim()}${company ? ` — ${company.trim()}` : ""}`,
+        from_name: "QuantaAI Studio Website",
+        name: name.trim(),
+        email: email.trim(),
+        company: (company || "").trim() || "Not provided",
+        message: details.trim(),
+      }),
+    });
+
+    const result = await web3formsResponse.json();
+
+    if (!result.success) {
+      console.error("Web3Forms error:", result);
+      return NextResponse.json(
+        { error: "Failed to send message. Please try again." },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       { success: true, message: "Message received. We'll be in touch within 24 hours." },
       { status: 200 }
     );
-  } catch {
+  } catch (error) {
+    console.error("Contact form error:", error);
     return NextResponse.json(
-      { error: "Invalid request body." },
-      { status: 400 }
+      { error: "Failed to send message. Please try again or contact us directly." },
+      { status: 500 }
     );
   }
 }

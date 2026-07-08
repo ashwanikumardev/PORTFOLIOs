@@ -90,7 +90,7 @@ export default function Navbar() {
                   onClick={(e) => handleNavClick(e, "#contact")}
                   className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-electric to-purple px-4 py-2 text-[13px] font-ui font-semibold text-white transition-all duration-200 hover:opacity-90 hover:shadow-lg hover:shadow-electric/20"
                 >
-                  Book a Call
+                  Get Started
                 </a>
               </div>
             </div>
@@ -173,7 +173,7 @@ export default function Navbar() {
                       onClick={(e) => handleNavClick(e, "#contact")}
                       className="flex items-center justify-center rounded-xl bg-gradient-to-r from-electric to-purple px-4 py-3 text-sm font-semibold text-white transition-all hover:opacity-90"
                     >
-                      Book a Call
+                      Get Started
                     </a>
                   </div>
                 </div>

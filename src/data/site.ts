@@ -29,9 +29,9 @@ export const SITE = {
     "QuantaAI Studio is an AI-powered creative agency that helps brands grow through premium video advertising, creative design, branding, websites, and AI-driven marketing solutions.",
   // PLACEHOLDER: Update with actual domain once acquired
   url: "https://quantaaistudio.com",
-  email: "hello@quantaaistudio.com",
-  phone: "",
-  whatsapp: "https://wa.me/1234567890", // PLACEHOLDER: Update with actual WhatsApp number
+  email: "quantaaistudio@gmail.com",
+  phone: "9625790805",
+  whatsapp: "https://wa.me/919625790805",
   calendly: "https://calendly.com/quantaaistudio", // PLACEHOLDER: Update with actual scheduling link
   social: {
     instagram: "https://instagram.com/quantaaistudio",
@@ -356,7 +356,7 @@ export const PRICING_TIERS: PricingTier[] = [
       { text: "Campaign management", included: false },
       { text: "Dedicated account manager", included: false },
     ],
-    cta: "Book a Call",
+    cta: "Get Started",
     highlighted: false,
   },
   {
@@ -374,7 +374,7 @@ export const PRICING_TIERS: PricingTier[] = [
       { text: "Basic campaign guidance", included: true },
       { text: "Dedicated account manager", included: false },
     ],
-    cta: "Book a Call",
+    cta: "Get Started",
     highlighted: true,
   },
   {
@@ -392,7 +392,7 @@ export const PRICING_TIERS: PricingTier[] = [
       { text: "Campaign management", included: true },
       { text: "Dedicated account manager", included: true },
     ],
-    cta: "Book a Call",
+    cta: "Get Started",
     highlighted: false,
   },
 ];
