@@ -66,11 +66,20 @@ export async function POST(req: NextRequest) {
     }
 
     // Send email via Web3Forms (free, no signup needed)
+    const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      console.error("WEB3FORMS_ACCESS_KEY is not set in environment variables");
+      return NextResponse.json(
+        { error: "Server configuration error. Please contact us directly." },
+        { status: 500 }
+      );
+    }
+
     const web3formsResponse = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        access_key: process.env.WEB3FORMS_ACCESS_KEY,
+        access_key: accessKey,
         subject: `New Inquiry from ${name.trim()}${company ? ` — ${company.trim()}` : ""}`,
         from_name: "QuantaAI Studio Website",
         name: name.trim(),
@@ -83,9 +92,9 @@ export async function POST(req: NextRequest) {
     const result = await web3formsResponse.json();
 
     if (!result.success) {
-      console.error("Web3Forms error:", result);
+      console.error("Web3Forms error:", JSON.stringify(result));
       return NextResponse.json(
-        { error: "Failed to send message. Please try again." },
+        { error: result.message || "Failed to send message. Please try again." },
         { status: 500 }
       );
     }
