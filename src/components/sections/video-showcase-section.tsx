@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -64,18 +64,12 @@ function thumbnailUrl(id: string) {
 }
 
 /* ─────────────────────────────────────────────
-   Auto-play interval (ms)
-───────────────────────────────────────────── */
-const AUTOPLAY_INTERVAL = 12000;
-
-/* ─────────────────────────────────────────────
    Component
 ───────────────────────────────────────────── */
 export function VideoShowcaseSection() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [iframeReady, setIframeReady] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const video = VIDEOS[current];
 
@@ -87,18 +81,6 @@ export function VideoShowcaseSection() {
 
   const next = useCallback(() => goTo(current + 1, 1), [current, goTo]);
   const prev = useCallback(() => goTo(current - 1, -1), [current, goTo]);
-
-  const resetTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(next, AUTOPLAY_INTERVAL);
-  }, [next]);
-
-  useEffect(() => {
-    resetTimer();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [resetTimer]);
 
   const variants = {
     enter: (dir: number) => ({
@@ -221,7 +203,7 @@ export function VideoShowcaseSection() {
 
           {/* ── Prev arrow ── */}
           <button
-            onClick={() => { prev(); resetTimer(); }}
+            onClick={prev}
             aria-label="Previous video"
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 sm:-translate-x-5 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/80 text-foreground backdrop-blur-sm transition-all duration-200 hover:bg-card hover:border-electric/40 hover:text-electric hover:shadow-lg hover:shadow-electric/10"
           >
@@ -230,7 +212,7 @@ export function VideoShowcaseSection() {
 
           {/* ── Next arrow ── */}
           <button
-            onClick={() => { next(); resetTimer(); }}
+            onClick={next}
             aria-label="Next video"
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 sm:translate-x-5 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/80 text-foreground backdrop-blur-sm transition-all duration-200 hover:bg-card hover:border-electric/40 hover:text-electric hover:shadow-lg hover:shadow-electric/10"
           >
@@ -263,7 +245,7 @@ export function VideoShowcaseSection() {
           {VIDEOS.map((v, i) => (
             <button
               key={v.id}
-              onClick={() => { goTo(i, i > current ? 1 : -1); resetTimer(); }}
+              onClick={() => goTo(i, i > current ? 1 : -1)}
               aria-label={`Go to video ${i + 1}: ${v.title}`}
               className={cn(
                 "h-1.5 rounded-full transition-all duration-300",
@@ -280,7 +262,7 @@ export function VideoShowcaseSection() {
           {VIDEOS.map((v, i) => (
             <button
               key={v.id}
-              onClick={() => { goTo(i, i > current ? 1 : -1); resetTimer(); }}
+              onClick={() => goTo(i, i > current ? 1 : -1)}
               className={cn(
                 "group relative overflow-hidden rounded-xl border transition-all duration-200",
                 i === current
