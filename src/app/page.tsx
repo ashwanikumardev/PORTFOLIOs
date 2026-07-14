@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import { HeroSection } from "@/components/sections/hero-section";
+import { VideoShowcaseSection } from "@/components/sections/video-showcase-section";
 import { TrustedBySection } from "@/components/sections/trusted-by-section";
 import { ServicesSection } from "@/components/sections/services-section";
 import { PortfolioSection } from "@/components/sections/portfolio-section";
@@ -50,6 +51,7 @@ export default function Page() {
       <Navbar />
       <main>
         <HeroSection />
+        <VideoShowcaseSection />
         <TrustedBySection />
         <ServicesSection />
         <PortfolioSection />
