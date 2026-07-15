@@ -10,6 +10,13 @@ import { cn } from "@/lib/utils";
 ───────────────────────────────────────────── */
 const VIDEOS = [
   {
+    id: "8EpGbGDgObo",
+    title: "Latest AI Creative Showcase",
+    description:
+      "Our newest AI-powered creative production — see the future of digital advertising in action.",
+    isShort: false,
+  },
+  {
     id: "Q5DK3KWPehk",
     title: "AI-Powered Brand Commercial",
     description:
@@ -258,7 +265,7 @@ export function VideoShowcaseSection() {
         </div>
 
         {/* ── Thumbnail strip ── */}
-        <div className="mt-8 grid grid-cols-4 gap-3 sm:gap-4">
+        <div className="mt-8 grid grid-cols-5 gap-3 sm:gap-4">
           {VIDEOS.map((v, i) => (
             <button
               key={v.id}
