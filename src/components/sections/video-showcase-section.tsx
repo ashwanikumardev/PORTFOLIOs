@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 ───────────────────────────────────────────── */
 const VIDEOS = [
   {
-    id: "8EpGbGDgObo",
+    id: "pGzqrBGACWE",
     title: "Latest AI Creative Showcase",
     description:
       "Our newest AI-powered creative production — see the future of digital advertising in action.",
